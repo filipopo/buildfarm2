@@ -28,8 +28,8 @@ ARTIFACTS_FOLDER=$6
 [ -z $LIST ] && LIST=nonbloom
 [ -z $VARIANT ] && VARIANT=unstable
 [ -z $REPOSITORY ] && REPOSITORY=px4_firmware
-[ -z $BASE_IMAGE ] && BASE_IMAGE=ctumrs/ros_noetic:2025-02-05
-[ -z $DOCKER_IMAGE ] && DOCKER_IMAGE=noetic_builder
+[ -z $BASE_IMAGE ] && BASE_IMAGE=ctumrs/ros_jazzy:latest
+[ -z $DOCKER_IMAGE ] && DOCKER_IMAGE=jazzy_builder
 [ -z $ARTIFACTS_FOLDER ] && ARTIFACTS_FOLDER=/tmp/artifacts
 
 ## | ---------------------- derived args ---------------------- |
@@ -88,8 +88,8 @@ echo "$0: loading cached builder docker image"
 
 if ! $RUN_LOCALLY; then
 
-  docker pull ghcr.io/ctu-mrs/buildfarm:$DOCKER_IMAGE
-  docker tag ghcr.io/ctu-mrs/buildfarm:$DOCKER_IMAGE $DOCKER_IMAGE
+  docker pull ghcr.io/ctu-mrs/buildfarm2:$DOCKER_IMAGE
+  docker tag ghcr.io/ctu-mrs/buildfarm2:$DOCKER_IMAGE $DOCKER_IMAGE
 
 fi
 
