@@ -93,8 +93,8 @@ echo "$0: loading cached builder docker image"
 
 if ! $RUN_LOCALLY; then
 
-  docker pull ghcr.io/ctu-mrs/buildfarm:$DOCKER_IMAGE
-  docker tag ghcr.io/ctu-mrs/buildfarm:$DOCKER_IMAGE $DOCKER_IMAGE
+  docker pull ghcr.io/ctu-mrs/buildfarm2:$DOCKER_IMAGE
+  docker tag ghcr.io/ctu-mrs/buildfarm2:$DOCKER_IMAGE $DOCKER_IMAGE
 
 fi
 
@@ -153,8 +153,8 @@ if [ $DEBS_EXIST -gt 0 ]; then
 
   if ! $RUN_LOCALLY; then
 
-    docker tag $DOCKER_IMAGE ghcr.io/ctu-mrs/buildfarm:$DOCKER_IMAGE
-    docker push ghcr.io/ctu-mrs/buildfarm:$DOCKER_IMAGE
+    docker tag $DOCKER_IMAGE ghcr.io/ctu-mrs/buildfarm2:$DOCKER_IMAGE
+    docker push ghcr.io/ctu-mrs/buildfarm2:$DOCKER_IMAGE
 
   fi
 
