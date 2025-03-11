@@ -25,7 +25,7 @@ ARTIFACTS_FOLDER=$4
 
 [ -z $LIST ] && LIST=mrs
 [ -z $VARIANT ] && VARIANT=unstable
-[ -z $DOCKER_IMAGE ] && DOCKER_IMAGE=noetic_builder
+[ -z $DOCKER_IMAGE ] && DOCKER_IMAGE=jazzy_builder
 [ -z $ARTIFACTS_FOLDER ] && ARTIFACTS_FOLDER=/tmp/artifacts
 
 ## | ---------------------- derived args ---------------------- |
@@ -129,6 +129,7 @@ docker run \
 
 cd /tmp
 tar -cvzf workspace.tar.gz workspace
+[ ! -e $ARTIFACTS_FOLDER ] && mkdir -p $ARTIFACTS_FOLDER || echo ""
 mv workspace.tar.gz $ARTIFACTS_FOLDER/
 
 echo "$0: "

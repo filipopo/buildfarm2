@@ -13,11 +13,10 @@ OTHER_FILES_FOLDER=/etc/docker/other_files
 
 WORKSPACE=/tmp/workspace
 cd $WORKSPACE
-source /opt/ros/noetic/setup.bash
-catkin init
+source /opt/ros/jazzy/setup.bash
 
-catkin config --profile debug --cmake-args -DCMAKE_BUILD_TYPE=Debug
-catkin profile set debug
+# catkin config --profile debug --cmake-args -DCMAKE_BUILD_TYPE=Debug
+# catkin profile set debug
 
 rosdep install -y -v --from-path src/
 
@@ -26,5 +25,6 @@ ln -s /etc/docker/repository
 
 git config --global --add safe.directory /etc/docker/repository
 
-catkin build --limit-status-rate 0.2 --cmake-args -DCOVERAGE=true -DMRS_ENABLE_TESTING=true
-catkin build --limit-status-rate 0.2 --cmake-args -DCOVERAGE=true -DMRS_ENABLE_TESTING=true --catkin-make-args tests
+cd $WORKSPACE
+
+colcon build --cmake-args -DCOVERAGE=true

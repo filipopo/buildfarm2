@@ -11,25 +11,25 @@ WORKSPACE=/tmp/workspace
 COVERAGE=/etc/docker/coverage
 COREDUMP=/etc/docker/coredump
 
+echo "$0: installing dependencies using rosdep"
+
+rosdep install -y -v --from-path $WORKSPACE/src
+
 ## | ---------------- initialize the workspace ---------------- |
 
-if [ ! -e $WORKSPACE/devel ]; then
+if [ ! -e $WORKSPACE/install ]; then
 
   echo "$0: workspace not initialized, initializing"
 
   cd $WORKSPACE
 
-  source /opt/ros/noetic/setup.bash
-  catkin init
+  source /opt/ros/jazzy/setup.bash
+  colcon build --cmake-args -DCOVERAGE=true
 
-  catkin config --profile debug --cmake-args -DCMAKE_BUILD_TYPE=Debug
-  catkin profile set debug
+  # catkin config --profile debug --cmake-args -DCMAKE_BUILD_TYPE=Debug
+  # catkin profile set debug
 
 fi
-
-echo "$0: installing dependencies using rosdep"
-
-rosdep install -y -v --from-path $WORKSPACE/src
 
 ## | ------------------- build the workspace ------------------ |
 
@@ -37,22 +37,17 @@ echo "$0: building the workspace"
 
 cd $WORKSPACE
 
-catkin build --limit-status-rate 0.2 --cmake-args -DCOVERAGE=true -DMRS_ENABLE_TESTING=true
-catkin build --limit-status-rate 0.2 --cmake-args -DCOVERAGE=true -DMRS_ENABLE_TESTING=true --catkin-make-args tests
+colcon build --cmake-args -DCOVERAGE=true
 
-source $WORKSPACE/devel/setup.bash
+source $WORKSPACE/install/setup.bash
 
 ## | --- run tests an all ros packages within the repository -- |
 
-cd $WORKSPACE/src/$REPOSITORY_NAME
-ROS_DIRS=$(find . -name package.xml -printf "%h\n")
+cd $WORKSPACE
 
 FAILED=0
 
-for DIR in $ROS_DIRS; do
-  cd $WORKSPACE/src/$REPOSITORY_NAME/$DIR
-  catkin test --limit-status-rate 0.2 --this -p 1 -s || FAILED=1
-done
+colcon test --base-paths $WORKSPACE/src/$REPOSITORY_NAME || FAILED=1
 
 echo "$0: tests finished"
 
@@ -63,10 +58,14 @@ if [[ "$FAILED" -eq 0 ]]; then
   echo "$0: storing coverage data"
 
   # gather all the coverage data from the workspace
-  lcov --capture --directory ${WORKSPACE} --output-file /tmp/coverage.original
+  lcov --capture --directory ${WORKSPACE} --output-file /tmp/coverage.original --ignore-errors mismatch
+
+  echo "$0: filtering out tests"
 
   # filter out unwanted files, i.e., test files
   lcov --remove /tmp/coverage.original "*/test/*" --output-file /tmp/coverage.removed || echo "$0: coverage tracefile is empty"
+
+  echo "$0: extract sources"
 
   # extract coverage data for the source folder of the workspace
   lcov --extract /tmp/coverage.removed "$WORKSPACE/src/*" --output-file $COVERAGE/$REPOSITORY_NAME.info || echo "$0: coverage tracefile is empty"

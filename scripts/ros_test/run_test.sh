@@ -33,7 +33,7 @@ ARTIFACTS_FOLDER=$5
 [ -z $LIST ] && LIST=mrs
 [ -z $VARIANT ] && VARIANT=unstable
 [ -z $REPOSITORY_NAME ] && REPOSITORY_NAME=mrs_lib
-[ -z $DOCKER_IMAGE ] && DOCKER_IMAGE=noetic_builder
+[ -z $DOCKER_IMAGE ] && DOCKER_IMAGE=jazzy_builder
 [ -z $ARTIFACTS_FOLDER ] && ARTIFACTS_FOLDER=/tmp/artifacts
 
 ## | -------------------- derived variables ------------------- |
@@ -62,8 +62,8 @@ echo "$0: loading cached builder docker image"
 
 if ! $RUN_LOCALLY; then
 
-  docker pull ghcr.io/ctu-mrs/buildfarm:$DOCKER_IMAGE
-  docker tag ghcr.io/ctu-mrs/buildfarm:$DOCKER_IMAGE $DOCKER_IMAGE
+  docker pull ghcr.io/ctu-mrs/buildfarm2:$DOCKER_IMAGE
+  docker tag ghcr.io/ctu-mrs/buildfarm2:$DOCKER_IMAGE $DOCKER_IMAGE
 
 fi
 
@@ -76,6 +76,10 @@ echo "$0: image loaded"
 if [ -e $ARTIFACTS_FOLDER/workspace.tar.gz ]; then
 
   echo "$0: workspace passed from the job before"
+
+  if [ -e $WORKSPACE_FOLDER ]; then
+    sudo rm -rf $WORKSPACE_FOLDER
+  fi
 
   tar -xvzf $ARTIFACTS_FOLDER/workspace.tar.gz -C /tmp/
 
