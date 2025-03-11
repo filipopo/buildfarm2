@@ -104,7 +104,7 @@ OLDIFS=$IFS; IFS=$'\n'; for LINE in $BUILD_ORDER; do
       export DEB_BUILD_OPTIONS="parallel=`nproc`"
     fi
 
-    bloom-generate rosdebian --os-name ubuntu --os-version focal --ros-distro jazzy
+    bloom-generate rosdebian --os-name ubuntu --os-version noble --ros-distro jazzy
 
     epoch=2
     build_flag="$(date +%Y%m%d.%H%M%S)~git.$SHA.base.$DOCKER_SHA"

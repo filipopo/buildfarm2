@@ -14,7 +14,7 @@ mrs_lib:
   source: https://github.com/ctu-mrs/mrs_lib
   gitman: false
   git_refs:
-    unstable: ros2_master
+    unstable: ros2
     testing: ros2_release_candidate
     stable: ros2_release
   ros_test:
@@ -26,7 +26,7 @@ mrs_multirotor_simulator:
   source: https://github.com/ctu-mrs/mrs_multirotor_simulator
   gitman: false
   git_refs:
-    unstable: ros2_master
+    unstable: ros2
     testing: ros2_release_candidate
     stable: ros2_release
   ros_test:
