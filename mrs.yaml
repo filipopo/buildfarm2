@@ -1,0 +1,34 @@
+mrs_msgs:
+  architecture: [amd64, arm64]
+  source: https://github.com/ctu-mrs/mrs_msgs
+  gitman: false
+  git_refs:
+    unstable: ros2
+    testing: ros2_release_candidate
+    stable: ros2_release
+  ros_test:
+    enabled: false
+
+mrs_lib:
+  architecture: [amd64, arm64]
+  source: https://github.com/ctu-mrs/mrs_lib
+  gitman: false
+  git_refs:
+    unstable: ros2_master
+    testing: ros2_release_candidate
+    stable: ros2_release
+  ros_test:
+    enabled: true
+    full_test_coverage: true
+
+mrs_multirotor_simulator:
+  architecture: [amd64, arm64]
+  source: https://github.com/ctu-mrs/mrs_multirotor_simulator
+  gitman: false
+  git_refs:
+    unstable: ros2_master
+    testing: ros2_release_candidate
+    stable: ros2_release
+  ros_test:
+    enabled: false
+    full_test_coverage: true
