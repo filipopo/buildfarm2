@@ -3,12 +3,12 @@ name: unstable_nonbloom_amd64
 on:
   workflow_dispatch:
 
-  # schedule:
-  #   - cron:  '0 12 * * *'
+  schedule:
+    - cron:  '0 12 * * *'
 
-  # push:
-  #   branches:
-  #     - master
+  push:
+    branches:
+      - master
 
 concurrency:
   group: ${{github.workflow}}-${{github.ref}}
@@ -17,8 +17,8 @@ concurrency:
 env:
   VARIANT: unstable
   APP_LIST: nonbloom
-  BASE_IMAGE: ctumrs/ros_noetic:latest
-  BUILDER_IMAGE: noetic_builder_amd_${{github.RUN_ID}}
+  BASE_IMAGE: ctumrs/ros_jazzy:latest
+  BUILDER_IMAGE: jazzy_builder_amd_${{github.RUN_ID}}
   ARTIFACTS_FOLDER: /tmp/artifacts
 
 jobs:
@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: ctu-mrs/ci_scripts
-          ref: master
+          ref: ros2
           path: ci_scripts
       - id: init_artifacts
         run: |
@@ -65,7 +65,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: ctu-mrs/ci_scripts
-          ref: master
+          ref: ros2
           path: ci_scripts
           token: ${{secrets.PUSH_TOKEN}}
       - id: generate
@@ -97,7 +97,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: ctu-mrs/ci_scripts
-          ref: master
+          ref: ros2
           path: ci_scripts
           token: ${{secrets.PUSH_TOKEN}}
       - id: build
@@ -139,7 +139,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: ctu-mrs/ci_scripts
-          ref: master
+          ref: ros2
           path: ci_scripts
           token: ${{secrets.PUSH_TOKEN}}
       - name: Deploy
