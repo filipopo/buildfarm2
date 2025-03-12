@@ -27,4 +27,4 @@ git config --global --add safe.directory /etc/docker/repository
 
 cd $WORKSPACE
 
-colcon build --cmake-args -DCOVERAGE=true
+colcon build --cmake-args -DCOVERAGE=true -DMRS_ENABLE_TESTING=true

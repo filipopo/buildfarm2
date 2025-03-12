@@ -24,10 +24,7 @@ if [ ! -e $WORKSPACE/install ]; then
   cd $WORKSPACE
 
   source /opt/ros/jazzy/setup.bash
-  colcon build --cmake-args -DCOVERAGE=true
-
-  # catkin config --profile debug --cmake-args -DCMAKE_BUILD_TYPE=Debug
-  # catkin profile set debug
+  colcon build --cmake-args -DCOVERAGE=true -DMRS_ENABLE_TESTING=true
 
 fi
 
@@ -37,7 +34,7 @@ echo "$0: building the workspace"
 
 cd $WORKSPACE
 
-colcon build --cmake-args -DCOVERAGE=true
+colcon build --cmake-args -DCOVERAGE=true -DMRS_ENABLE_TESTING=true
 
 source $WORKSPACE/install/setup.bash
 
