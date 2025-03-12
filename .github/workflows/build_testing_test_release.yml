@@ -1,22 +1,22 @@
-name: unstable_thirdparty_amd64
+name: build_testing_test_release
 
 on:
   workflow_dispatch:
 
   schedule:
-    - cron:  '0 15 * * *'
+    - cron:  '0 17 * * *'
 
-  # push:
-  #   branches:
-  #     - master
+  push:
+    branches:
+      - master
 
 concurrency:
-  group: ${{github.workflow}}-${{github.ref}}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
-  VARIANT: unstable
-  APP_LIST: thirdparty
+  VARIANT: testing
+  APP_LIST: mrs
   BASE_IMAGE: ctumrs/ros_jazzy:latest
   BUILDER_IMAGE: jazzy_builder_amd_${{github.RUN_ID}}
   ARTIFACTS_FOLDER: /tmp/artifacts
@@ -103,7 +103,6 @@ jobs:
       - id: build
         run: |
           ./scripts/ros_build/build.sh ${{env.APP_LIST}} ${{env.VARIANT}} "${{matrix.job}}" ${{env.BASE_IMAGE}} ${{env.BUILDER_IMAGE}} ${{env.ARTIFACTS_FOLDER}}
-          ls /tmp/artifacts
       - name: Delete old artifacts
         uses: geekyeggo/delete-artifact@v5
         with:
@@ -150,10 +149,23 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Delete old images
+      - name: Delete current image
         uses: dataaxiom/ghcr-cleanup-action@v1
         with:
           packages: '${{github.event.repository.name}}'
-          older-than: 7 days
-          keep-n-tagged: 1
+          delete-tags: '${{env.BUILDER_IMAGE}}'
           token: ${{secrets.PUSH_TOKEN}}
+
+  wait-for-ppa:
+    runs-on: ubuntu-22.04
+    needs: delete_builder
+    steps:
+      - id: run
+        run: |
+          sleep 300
+
+  test_and_release:
+    needs: wait-for-ppa
+    uses: ctu-mrs/buildfarm2/.github/workflows/rostest_merge_to_release.yml@master
+    secrets:
+      PUSH_TOKEN: ${{secrets.PUSH_TOKEN}}
