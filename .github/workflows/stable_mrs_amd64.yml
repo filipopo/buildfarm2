@@ -1,0 +1,159 @@
+name: stable_mrs_amd64
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron:  '0 20 * * *'
+
+  push:
+    branches:
+      - master
+
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
+
+env:
+  VARIANT: stable
+  APP_LIST: mrs
+  BASE_IMAGE: ctumrs/ros_jazzy:latest
+  BUILDER_IMAGE: jazzy_builder_amd_${{github.RUN_ID}}
+  ARTIFACTS_FOLDER: /tmp/artifacts
+
+jobs:
+
+  init-artifacts:
+    runs-on: ubuntu-22.04
+    env:
+      PUSH_TOKEN: ${{secrets.PUSH_TOKEN}}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: 'recursive'
+      - name: Checkout CI scripts
+        uses: actions/checkout@v3
+        with:
+          repository: ctu-mrs/ci_scripts
+          ref: ros2
+          path: ci_scripts
+      - id: init_artifacts
+        run: |
+          mkdir -p ${{env.ARTIFACTS_FOLDER}}
+      - id: prime_image
+        run: |
+          ./ci_scripts/docker/prime_image/prime_image.sh ${{env.BASE_IMAGE}} ${{env.BUILDER_IMAGE}} ${{env.VARIANT}} ${{env.ARTIFACTS_FOLDER}} buildfarm2
+      - name: Save artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts
+          path: ${{env.ARTIFACTS_FOLDER}}
+          overwrite: true
+
+  generate-jobs:
+    needs: init-artifacts
+    runs-on: ubuntu-22.04
+    outputs:
+      packages: ${{steps.generate.outputs.packages}}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: 'recursive'
+      - name: Checkout CI scripts
+        uses: actions/checkout@v3
+        with:
+          repository: ctu-mrs/ci_scripts
+          ref: ros2
+          path: ci_scripts
+          token: ${{secrets.PUSH_TOKEN}}
+      - id: generate
+        run: |
+          JOB_STRATEGY_MATRIX=$(./scripts/get_build_matrix.sh ${{env.APP_LIST}} ${{env.VARIANT}})
+          echo "packages=$JOB_STRATEGY_MATRIX" >> "$GITHUB_OUTPUT"
+
+  build-job:
+    needs: generate-jobs
+    runs-on: ubuntu-22.04
+    timeout-minutes: 360 # 6 hour timeout
+    strategy:
+      matrix:
+        job: ${{ fromJson(needs.generate-jobs.outputs.packages) }}
+      max-parallel: 1 # Run jobs serially
+    env:
+      PUSH_TOKEN: ${{secrets.PUSH_TOKEN}}
+    steps:
+      - name: Load artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifacts
+          path: ${{env.ARTIFACTS_FOLDER}}
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: 'recursive'
+      - name: Checkout CI scripts
+        uses: actions/checkout@v3
+        with:
+          repository: ctu-mrs/ci_scripts
+          ref: ros2
+          path: ci_scripts
+          token: ${{secrets.PUSH_TOKEN}}
+      - id: build
+        run: |
+          ./scripts/ros_build/build.sh ${{env.APP_LIST}} ${{env.VARIANT}} "${{matrix.job}}" ${{env.BASE_IMAGE}} ${{env.BUILDER_IMAGE}} ${{env.ARTIFACTS_FOLDER}}
+          ls /tmp/artifacts
+      - name: Delete old artifacts
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: artifacts
+          failOnError: false
+      - name: Save artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts
+          path: ${{env.ARTIFACTS_FOLDER}}
+          overwrite: true
+
+  collect-artifacts:
+    runs-on: ubuntu-22.04
+    needs: build-job
+    env:
+      PUSH_TOKEN: ${{secrets.PUSH_TOKEN}}
+    steps:
+      - name: Load artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifacts
+          path: ${{env.ARTIFACTS_FOLDER}}
+      - id: execute
+        run: |
+          rm ${{env.ARTIFACTS_FOLDER}}/compiled.txt 2> /dev/null || true
+          rm ${{env.ARTIFACTS_FOLDER}}/base_sha.txt 2> /dev/null || true
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: 'recursive'
+      - name: Checkout CI scripts
+        uses: actions/checkout@v3
+        with:
+          repository: ctu-mrs/ci_scripts
+          ref: ros2
+          path: ci_scripts
+          token: ${{secrets.PUSH_TOKEN}}
+      - name: Deploy
+        run: ./ci_scripts/package_build/push_to_ppa.sh ${{env.VARIANT}} ${{env.ARTIFACTS_FOLDER}}
+
+  delete_builder:
+    needs: collect-artifacts
+    if: always()
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Delete old images
+        uses: dataaxiom/ghcr-cleanup-action@v1
+        with:
+          packages: '${{github.event.repository.name}}'
+          older-than: 7 days
+          keep-n-tagged: 1
+          token: ${{secrets.PUSH_TOKEN}}
