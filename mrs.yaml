@@ -44,3 +44,39 @@ mrs_uav_hw_api:
   ros_test:
     enabled: false
     full_test_coverage: true
+
+mrs_uav_managers:
+  architecture: [amd64, arm64]
+  source: https://github.com/ctu-mrs/mrs_uav_managers
+  gitman: false
+  git_refs:
+    unstable: ros2
+    testing: ros2_release_candidate
+    stable: ros2_release
+  ros_test:
+    enabled: false
+    full_test_coverage: true
+
+mrs_uav_state_estimators:
+  architecture: [amd64, arm64]
+  source: https://github.com/ctu-mrs/mrs_uav_state_estimators
+  gitman: false
+  git_refs:
+    unstable: ros2
+    testing: ros2_release_candidate
+    stable: ros2_release
+  ros_test:
+    enabled: false
+    full_test_coverage: true
+
+mrs_uav_controllers:
+  architecture: [amd64, arm64]
+  source: https://github.com/ctu-mrs/mrs_uav_controllers
+  gitman: false
+  git_refs:
+    unstable: ros2
+    testing: ros2_release_candidate
+    stable: ros2_release
+  ros_test:
+    enabled: false
+    full_test_coverage: true
