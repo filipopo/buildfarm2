@@ -93,6 +93,18 @@ mrs_uav_core:
     enabled: false
     full_test_coverage: true
 
+mrs_uav_trackers:
+  architecture: [amd64, arm64]
+  source: https://github.com/ctu-mrs/mrs_uav_trackers
+  gitman: false
+  git_refs:
+    unstable: ros2
+    testing: ros2_release_candidate
+    stable: ros2_release
+  ros_test:
+    enabled: false
+    full_test_coverage: true
+
 # mrs_mpc_solvers:
 #   architecture: [amd64, arm64]
 #   source: https://github.com/ctu-mrs/mrs_mpc_solvers
