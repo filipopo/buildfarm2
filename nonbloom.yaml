@@ -6,3 +6,12 @@ mrs_uav_shell_additions:
     unstable: ros2
     testing: ros2_release_candidate
     stable: ros2_release
+
+mrs_geographiclib_datasets:
+  architecture: [amd64] # this package is for all architectures
+  source: https://github.com/ctu-mrs/mrs-geographiclib-datasets
+  gitman: false
+  git_refs:
+    unstable: master
+    testing: release_candidate
+    stable: release
