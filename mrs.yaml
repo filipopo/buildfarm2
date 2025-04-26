@@ -141,6 +141,18 @@ mrs_uav_trajectory_generation:
     enabled: false
     full_test_coverage: true
 
+mrs_uav_testing:
+  architecture: [amd64, arm64]
+  source: https://github.com/ctu-mrs/mrs_uav_testing
+  gitman: false
+  git_refs:
+    unstable: ros2
+    testing: ros2_release_candidate
+    stable: ros2_release
+  ros_test:
+    enabled: true
+    full_test_coverage: true
+
 # mrs_mpc_solvers:
 #   architecture: [amd64, arm64]
 #   source: https://github.com/ctu-mrs/mrs_mpc_solvers
