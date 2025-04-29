@@ -44,7 +44,7 @@ cd $WORKSPACE
 
 FAILED=0
 
-colcon test --paths $WORKSPACE/src/$REPOSITORY_NAME --executor sequential --event-handlers console_direct+
+colcon test --paths $WORKSPACE/src/$REPOSITORY_NAME --executor sequential
 
 colcon test-result --all --verbose || FAILED=1
 
