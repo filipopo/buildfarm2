@@ -32,7 +32,7 @@ ARTIFACTS_FOLDER=$5
 
 [ -z $LIST ] && LIST=mrs
 [ -z $VARIANT ] && VARIANT=unstable
-[ -z $REPOSITORY_NAME ] && REPOSITORY_NAME=mrs_lib
+[ -z $REPOSITORY_NAME ] && REPOSITORY_NAME=mrs_uav_testing
 [ -z $DOCKER_IMAGE ] && DOCKER_IMAGE=jazzy_builder
 [ -z $ARTIFACTS_FOLDER ] && ARTIFACTS_FOLDER=/tmp/artifacts
 
