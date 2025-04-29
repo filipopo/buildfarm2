@@ -54,7 +54,7 @@ mrs_uav_managers:
     testing: ros2_release_candidate
     stable: ros2_release
   ros_test:
-    enabled: false
+    enabled: true
     full_test_coverage: true
 
 mrs_uav_state_estimators:
