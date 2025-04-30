@@ -71,9 +71,11 @@ OLDIFS=$IFS; IFS=$'\n'; for LINE in $BUILD_ORDER; do
   echo "$0: MY_DEPENDENCIES: '$MY_DEPENDENCIES'"
   echo ""
 
-
   DEPENDENCIES_CHANGED=false
-  for dep in `echo $MY_DEPENDENCIES`; do
+
+  # this \|/ has to iterate over the dependencies in bash
+  readarray -t MY_DEPENDENCIES_ITEMIZED <<< "$MY_DEPENDENCIES"
+  for dep in "${MY_DEPENDENCIES_ITEMIZED[@]}"; do
 
     FOUND=$(cat $OTHER_FILES_FOLDER/compiled.txt | grep $dep | wc -l)
 
