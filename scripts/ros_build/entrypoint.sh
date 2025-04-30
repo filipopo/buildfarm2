@@ -73,7 +73,7 @@ OLDIFS=$IFS; IFS=$'\n'; for LINE in $BUILD_ORDER; do
 
 
   DEPENDENCIES_CHANGED=false
-  for dep in `echo $MY_DEPENDENCIES`; o
+  for dep in `echo $MY_DEPENDENCIES`; do
 
     FOUND=$(cat $OTHER_FILES_FOLDER/compiled.txt | grep $dep | wc -l)
 
