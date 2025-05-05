@@ -34,15 +34,17 @@ echo "$0: building the workspace"
 
 cd $WORKSPACE
 
-colcon build --cmake-args -DCOVERAGE=true -DMRS_ENABLE_TESTING=true
-
 source $WORKSPACE/install/setup.bash
+
+colcon build --cmake-args -DCOVERAGE=true -DMRS_ENABLE_TESTING=true
 
 ## | --- run tests an all ros packages within the repository -- |
 
 cd $WORKSPACE
 
 FAILED=0
+
+colcon test-result --delete-yes
 
 colcon test --paths $WORKSPACE/src/$REPOSITORY_NAME --executor sequential
 
