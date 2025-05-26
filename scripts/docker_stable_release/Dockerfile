@@ -1,4 +1,4 @@
-FROM ctumrs/ros_noetic:latest
+FROM ctumrs/ros_jazzy:latest
 
 RUN apt-get -y update
 
@@ -12,6 +12,8 @@ RUN apt-get -y install software-properties-common curl bash
 
 RUN curl https://ctu-mrs.github.io/ppa-stable/add_ppa.sh | bash
 
-RUN apt-get -y install ros-noetic-mrs-uav-system-full
+RUN apt-get -y install ros-jazzy-mrs-uav-core
+
+RUN apt-get -y install gdb
 
 CMD ["/ros_entrypoint.sh"]

@@ -15,4 +15,4 @@ docker login --username klaxalk --password $TOKEN
 
 docker buildx create --name container --driver=docker-container --use
 
-docker buildx build . --file Dockerfile --tag ctumrs/mrs_uav_system:latest --platform=linux/amd64,linux/arm64 --push 
+docker buildx build . --file Dockerfile --tag ctumrs/mrs_uav_system2:latest --platform=linux/amd64,linux/arm64 --push 
