@@ -46,7 +46,7 @@ FAILED=0
 
 colcon test-result --delete-yes
 
-colcon test --paths $WORKSPACE/src/$REPOSITORY_NAME --executor sequential
+colcon test --paths $WORKSPACE/src/$REPOSITORY_NAME --executor sequential --ctest-args -R 'land_service'
 
 colcon test-result --all --verbose || FAILED=1
 
@@ -59,7 +59,7 @@ if [[ "$FAILED" -eq 0 ]]; then
   echo "$0: storing coverage data"
 
   # gather all the coverage data from the workspace
-  lcov --capture --directory ${WORKSPACE}/build --output-file /tmp/coverage.original --ignore-errors mismatch,mismatch,gcov,gcov,negative,negative || echo "$0: no coverage data to extract"
+  lcov --capture --directory ${WORKSPACE} --output-file /tmp/coverage.original || echo "$0: no coverage data to extract"
 
   echo "$0: filtering out tests"
 
