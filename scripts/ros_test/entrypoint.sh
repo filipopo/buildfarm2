@@ -46,7 +46,7 @@ FAILED=0
 
 colcon test-result --delete-yes
 
-colcon test --paths $WORKSPACE/src/$REPOSITORY_NAME --executor sequential --ctest-args -R 'land_service'
+colcon test --paths $WORKSPACE/src/$REPOSITORY_NAME --executor sequential --ctest-args
 
 colcon test-result --all --verbose || FAILED=1
 
