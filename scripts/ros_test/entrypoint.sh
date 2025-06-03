@@ -59,7 +59,7 @@ if [[ "$FAILED" -eq 0 ]]; then
   echo "$0: storing coverage data"
 
   # gather all the coverage data from the workspace
-  lcov --capture --directory ${WORKSPACE} --output-file /tmp/coverage.original || echo "$0: no coverage data to extract"
+  lcov --capture --directory ${WORKSPACE} --ignore-errors mismatch,mismatch,gcov,gcov,negative,negative --output-file /tmp/coverage.original || echo "$0: no coverage data to extract"
 
   echo "$0: filtering out tests"
 
