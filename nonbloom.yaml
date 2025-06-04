@@ -2,6 +2,7 @@ mrs_uav_shell_additions:
   architecture: [amd64] # this package is for all architectures
   source: https://github.com/ctu-mrs/mrs_uav_shell_additions
   gitman: false
+  generate_docker_image: false
   git_refs:
     unstable: ros2
     testing: ros2_release_candidate
@@ -11,6 +12,7 @@ mrs_geographiclib_datasets:
   architecture: [amd64] # this package is for all architectures
   source: https://github.com/ctu-mrs/mrs-geographiclib-datasets
   gitman: false
+  generate_docker_image: false
   git_refs:
     unstable: master
     testing: release_candidate
