@@ -28,7 +28,7 @@ echo "$0: workspace extracted"
 ls -la $WORKSPACE/src
 
 # install lcov
-sudo perl -MCPAN -e 'install(Capture::Tiny)' && perl -MCPAN -e 'install(DateTime)'
+sudo perl -MCPAN -e 'install(DateTime::Locale,DateTime::TimeZone,Params::ValidationCompiler,Specio,Specio::Declare,Specio::Exporter,Specio::Library::Builtins,Specio::Library::Numeric,Specio::Library::String,Specio::Subs,namespace::autoclean)'
 LCOV_VERSION=2.3.1 && cd /tmp && wget https://github.com/linux-test-project/lcov/releases/download/v$LCOV_VERSION/lcov-$LCOV_VERSION.tar.gz && tar -xvzf lcov-$LCOV_VERSION.tar.gz && cd lcov-$LCOV_VERSION && sudo make install
 
 # are there any coverage files?
