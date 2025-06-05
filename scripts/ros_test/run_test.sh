@@ -144,13 +144,13 @@ docker run \
   --rm \
   -v $WORKSPACE_FOLDER:/tmp/workspace \
   klaxalk/lcov \
-  /bin/bash -c "lcov --capture --directory /tmp/workspace --ignore-errors source,source,inconsistent,inconsistent,mismatch,mismatch,gcov,gcov,negative,negative --output-file /tmp/workspace/coverage.original || echo 'no coverage data to extract'"
+  /bin/bash -c "lcov --capture --directory /tmp/workspace --ignore-errors unused,unused,source,source,inconsistent,inconsistent,mismatch,mismatch,gcov,gcov,negative,negative --output-file /tmp/workspace/coverage.original || echo 'no coverage data to extract'"
 
 docker run \
   --rm \
   -v $WORKSPACE_FOLDER:/tmp/workspace \
   klaxalk/lcov \
-  /bin/bash -c "lcov --remove /tmp/workspace/coverage.original "*/test/*" --ignore-errors source,source,inconsistent,inconsistent,mismatch,mismatch,gcov,gcov,negative,negative --output-file /tmp/workspace/coverage.removed || echo 'coverage tracefile is empty'"
+  /bin/bash -c "lcov --remove /tmp/workspace/coverage.original "*/test/*" --ignore-errors unused,unused,source,source,inconsistent,inconsistent,mismatch,mismatch,gcov,gcov,negative,negative --output-file /tmp/workspace/coverage.removed || echo 'coverage tracefile is empty'"
 
 docker run \
   --rm \
