@@ -69,7 +69,7 @@ echo "$FULL_COVERAGE_REPOS" | while IFS= read -r REPO; do
     continue
   fi
 
-  if [[ "$PACKAGE" == "$REPOSITORY_NAME" ]]; then
+  if $RUN_LOCALLY && [[ "mrs_uav_hw_api" != "$PACKAGE" ]]; then
     continue
   fi
 

@@ -20,42 +20,64 @@ WORKSPACE=/tmp/workspace
 echo "$0: extracting workspace"
 
 # extract the workspace
-cd $ARTIFACT_FOLDER
-tar -xvzf workspace.tar.gz -C /tmp/
+if !$RUN_LOCALLY; then
+  cd $ARTIFACT_FOLDER
+  tar -xvzf workspace.tar.gz -C /tmp/
+fi
 
 echo "$0: workspace extracted"
 
 ls -la $WORKSPACE/src
 
-# install lcov
-sudo perl -MCPAN -e 'install(DateTime::Locale,DateTime::TimeZone,Params::ValidationCompiler,Specio,Specio::Declare,Specio::Exporter,Specio::Library::Builtins,Specio::Library::Numeric,Specio::Library::String,Specio::Subs,namespace::autoclean)'
-LCOV_VERSION=2.3.1 && cd /tmp && wget https://github.com/linux-test-project/lcov/releases/download/v$LCOV_VERSION/lcov-$LCOV_VERSION.tar.gz && tar -xvzf lcov-$LCOV_VERSION.tar.gz && cd lcov-$LCOV_VERSION && sudo make install
-
 # are there any coverage files?
+
+$REPO_PATH/ci_scripts/helpers/wait_for_docker.sh
+
+docker pull klaxalk/lcov
 
 ARGS=""
 
-for file in `ls $ARTIFACT_FOLDER | grep ".info"`; do
+for file in `ls $WORKSPACE | grep ".info"`; do
 
-  if [ -s ${ARTIFACT_FOLDER}/${file} ]; then
-    ARGS="${ARGS} -a ${ARTIFACT_FOLDER}/${file}"
+  if [ -s ${WORKSPACE}/${file} ]; then
+    ARGS="${ARGS} -a ${WORKSPACE}/${file}"
   fi
 
 done
 
-lcov $ARGS --output-file /tmp/coverage_temp.info
+echo "$0: combining coverage"
 
-# filter out unwanted files
-lcov --remove /tmp/coverage_temp.info "*/eth_*" --output-file /tmp/coverage.info || echo "$0: coverage tracefile is empty"
+docker run \
+  --rm \
+  -v $WORKSPACE:/tmp/workspace \
+  klaxalk/lcov \
+  /bin/bash -c "lcov $ARGS --output-file /tmp/workspace/coverage_temp.info"
 
-genhtml --title "MRS UAV System - Test coverage report" --prefix "/tmp/workspace/src" --demangle-cpp --legend --frames --show-details -o /tmp/coverage_html /tmp/coverage.info | tee /tmp/coverage.log
+echo "$0: filtering coverage"
 
-COVERAGE_PCT=`cat /tmp/coverage.log | tail -n 1 | awk '{print $2}'`
+docker run \
+  --rm \
+  -v $WORKSPACE:/tmp/workspace \
+  klaxalk/lcov \
+  /bin/bash -c "lcov --remove /tmp/workspace/coverage_temp.info --ignore-errors unused,unused '*/eth_*' --output-file /tmp/workspace/coverage.info || echo 'coverage tracefile is empty'"
+
+echo "$0: generating coverage html"
+
+docker run \
+  --rm \
+  -v $WORKSPACE:/tmp/workspace \
+  klaxalk/lcov \
+  /bin/bash -c "genhtml --title 'MRS UAV System - Test coverage report' --prefix '/tmp/workspace/src' --demangle-cpp --legend --frames --show-details -o /tmp/workspace/coverage_html /tmp/workspace/coverage.info | tee /tmp/workspace/coverage.log"
+
+
+COVERAGE_PCT=`cat $WORKSPACE/coverage.log | grep -E "lines\.\.\." | awk '{print $2}'`
 
 echo "Coverage: $COVERAGE_PCT"
 
-$REPO_PATH/ci_scripts/helpers/wait_for_docker.sh
-
 docker pull klaxalk/pybadges
 
-docker run --rm klaxalk/pybadges /bin/python3 -m pybadges --left-text="test coverage" --right-text="${COVERAGE_PCT}" --right-color="#0c0" > /tmp/coverage_html/badge.svg
+docker run \
+  --rm \
+  -v $WORKSPACE:/tmp/workspace \
+  klaxalk/pybadges \
+  /bin/bash -c "/bin/python3 -m pybadges --left-text='test coverage' --right-text='${COVERAGE_PCT}' --right-color='#0c0' > /tmp/workspace/coverage_html/badge.svg"

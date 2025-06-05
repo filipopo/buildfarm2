@@ -32,7 +32,7 @@ ARTIFACTS_FOLDER=$5
 
 [ -z $LIST ] && LIST=mrs
 [ -z $VARIANT ] && VARIANT=unstable
-[ -z $REPOSITORY_NAME ] && REPOSITORY_NAME=mrs_uav_managers
+[ -z $REPOSITORY_NAME ] && REPOSITORY_NAME=mrs_uav_hw_api
 [ -z $DOCKER_IMAGE ] && DOCKER_IMAGE=jazzy_builder
 [ -z $ARTIFACTS_FOLDER ] && ARTIFACTS_FOLDER=/tmp/artifacts
 
@@ -133,11 +133,32 @@ docker run \
   --rm \
   -v $WORKSPACE_FOLDER:/tmp/workspace \
   -v /tmp/coredumps:/etc/docker/coredumps \
-  -v /tmp/coverage:/etc/docker/coverage \
   $DOCKER_IMAGE \
   /bin/bash -c "/tmp/workspace/entrypoint.sh $REPOSITORY_NAME"
 
+$REPO_PATH/ci_scripts/helpers/wait_for_docker.sh
+
+docker pull klaxalk/lcov
+
+docker run \
+  --rm \
+  -v $WORKSPACE_FOLDER:/tmp/workspace \
+  klaxalk/lcov \
+  /bin/bash -c "lcov --capture --directory /tmp/workspace --ignore-errors source,source,inconsistent,inconsistent,mismatch,mismatch,gcov,gcov,negative,negative --output-file /tmp/workspace/coverage.original || echo 'no coverage data to extract'"
+
+docker run \
+  --rm \
+  -v $WORKSPACE_FOLDER:/tmp/workspace \
+  klaxalk/lcov \
+  /bin/bash -c "lcov --remove /tmp/workspace/coverage.original "*/test/*" --ignore-errors source,source,inconsistent,inconsistent,mismatch,mismatch,gcov,gcov,negative,negative --output-file /tmp/workspace/coverage.removed || echo 'coverage tracefile is empty'"
+
+docker run \
+  --rm \
+  -v $WORKSPACE_FOLDER:/tmp/workspace \
+  klaxalk/lcov \
+  /bin/bash -c "lcov --extract /tmp/workspace/coverage.removed "/tmp/workspace/src/*" --ignore-errors source,source,inconsistent,inconsistent,mismatch,mismatch,gcov,gcov,negative,negative --output-file /tmp/workspace/$REPOSITORY_NAME.info || echo 'coverage tracefile is empty'"
+
 # move the generated coverage data
-if [ ! -z "$( ls -A '/tmp/coverage' )" ]; then
-  cp -r /tmp/coverage/* /tmp/artifacts
+if [ -e /tmp/workspace/$REPOSITORY_NAME.info ]; then
+  cp -r /tmp/workspace/$REPOSITORY_NAME.info /tmp/artifacts
 fi
