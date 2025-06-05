@@ -14,13 +14,14 @@ REPO_PATH=$MY_PATH/..
 ARTIFACT_FOLDER=$1
 
 [ -z $ARTIFACT_FOLDER ] && ARTIFACT_FOLDER=/tmp/artifacts
+[ -z $RUN_LOCALLY ] && RUN_LOCALLY=false
 
 WORKSPACE=/tmp/workspace
 
 echo "$0: extracting workspace"
 
 # extract the workspace
-if !$RUN_LOCALLY; then
+if ! $RUN_LOCALLY; then
   cd $ARTIFACT_FOLDER
   tar -xvzf workspace.tar.gz -C /tmp/
 fi
