@@ -68,8 +68,9 @@ echo "$0: generating coverage html"
 docker run \
   --rm \
   -v $WORKSPACE:/tmp/workspace \
+  -v $ARTIFACT_FOLDER:/tmp/artifacts \
   klaxalk/lcov \
-  /bin/bash -c "genhtml --title 'MRS UAV System - Test coverage report' --prefix '/tmp/workspace/src' --demangle-cpp --legend --frames --show-details -o /tmp/workspace/coverage_html /tmp/workspace/coverage.info | tee /tmp/workspace/coverage.log"
+  /bin/bash -c "genhtml --title 'MRS UAV System - Test coverage report' --prefix '/tmp/workspace/src' --demangle-cpp --legend --frames --show-details -o /tmp/artifacts/coverage_html /tmp/workspace/coverage.info | tee /tmp/workspace/coverage.log"
 
 
 COVERAGE_PCT=`cat $WORKSPACE/coverage.log | grep -E "lines\.\.\." | awk '{print $2}'`
@@ -81,5 +82,6 @@ docker pull klaxalk/pybadges
 docker run \
   --rm \
   -v $WORKSPACE:/tmp/workspace \
+  -v $ARTIFACT_FOLDER:/tmp/artifacts \
   klaxalk/pybadges \
-  /bin/bash -c "/bin/python3 -m pybadges --left-text='test coverage' --right-text='${COVERAGE_PCT}' --right-color='#0c0' > /tmp/workspace/coverage_html/badge.svg"
+  /bin/bash -c "/bin/python3 -m pybadges --left-text='test coverage' --right-text='${COVERAGE_PCT}' --right-color='#0c0' > /tmp/artifacts/coverage_html/badge.svg"
