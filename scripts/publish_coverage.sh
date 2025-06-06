@@ -38,10 +38,10 @@ docker pull klaxalk/lcov
 
 ARGS=""
 
-for file in `ls $WORKSPACE | grep ".info"`; do
+for file in `ls $ARTIFACT_FOLDER | grep ".info"`; do
 
-  if [ -s ${WORKSPACE}/${file} ]; then
-    ARGS="${ARGS} -a ${WORKSPACE}/${file}"
+  if [ -s ${ARTIFACT_FOLDER}/${file} ]; then
+    ARGS="${ARGS} -a ${ARTIFACT_FOLDER}/${file}"
   fi
 
 done
@@ -51,6 +51,7 @@ echo "$0: combining coverage"
 docker run \
   --rm \
   -v $WORKSPACE:/tmp/workspace \
+  -v $ARTIFACT_FOLDER:/tmp/artifacts \
   klaxalk/lcov \
   /bin/bash -c "lcov $ARGS --output-file /tmp/workspace/coverage_temp.info"
 
