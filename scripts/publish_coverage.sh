@@ -36,42 +36,34 @@ $REPO_PATH/ci_scripts/helpers/wait_for_docker.sh
 
 docker pull klaxalk/lcov
 
-ARGS=""
-
-for file in `ls $ARTIFACT_FOLDER | grep ".info"`; do
-
-  if [ -s ${ARTIFACT_FOLDER}/${file} ]; then
-    ARGS="${ARGS} -a ${ARTIFACT_FOLDER}/${file}"
-  fi
-
-done
-
-echo "$0: combining coverage"
+echo "$0: combining coverage report files"
 
 docker run \
   --rm \
   -v $WORKSPACE:/tmp/workspace \
   -v $ARTIFACT_FOLDER:/tmp/artifacts \
   klaxalk/lcov \
-  /bin/bash -c "lcov $ARGS --output-file /tmp/workspace/coverage_temp.info"
+  /bin/bash -c "cd /tmp/workspace && gcovr --json-add-tracefile $ARTIFACT_FOLDER/*.json --filter='^.*\/src\/.*$' --exclude='^.*\/test\/.*$' --lcov /tmp/workspace/coverage.info"
 
-echo "$0: filtering coverage"
-
-docker run \
-  --rm \
-  -v $WORKSPACE:/tmp/workspace \
-  klaxalk/lcov \
-  /bin/bash -c "lcov --remove /tmp/workspace/coverage_temp.info --ignore-errors unused,unused '*/eth_*' --output-file /tmp/workspace/coverage.info || echo 'coverage tracefile is empty'"
-
-echo "$0: generating coverage html"
+echo "$0: filtering coverage report"
 
 docker run \
   --rm \
   -v $WORKSPACE:/tmp/workspace \
   -v $ARTIFACT_FOLDER:/tmp/artifacts \
   klaxalk/lcov \
-  /bin/bash -c "genhtml --title 'MRS UAV System - Test coverage report' --prefix '/tmp/workspace/src' --demangle-cpp --legend --frames --show-details -o /tmp/artifacts/coverage_html /tmp/workspace/coverage.info | tee /tmp/workspace/coverage.log"
+  /bin/bash -c "lcov -a /tmp/workspace/coverage.info --ignore-errors unused,unused,inconsistent,inconsistent,corrupt,corrupt,unsupported,unsupported,format,format --demangle-cpp --erase-functions '.*(\{lambda\(|anonymous\snamespace).*' --output-file /tmp/workspace/coverage2.info || echo 'coverage tracefile is empty'"
 
+echo "$0: generating coverage html report"
+
+docker run \
+  --rm \
+  -v $WORKSPACE:/tmp/workspace \
+  -v $ARTIFACT_FOLDER:/tmp/artifacts \
+  klaxalk/lcov \
+  /bin/bash -c "genhtml -c /color_fix.css --title 'MRS UAV System - Test coverage report' --prefix '/tmp/workspace/src' --ignore-errors unused,unused,inconsistent,inconsistent,corrupt,corrupt,unsupported,unsupported,format,format --demangle-cpp --legend --frames --show-details -o /tmp/artifacts/coverage_html /tmp/workspace/coverage2.info | tee /tmp/workspace/coverage.log"
+
+echo "$0: generating coverage badge"
 
 COVERAGE_PCT=`cat $WORKSPACE/coverage.log | grep -E "lines\.\.\." | awk '{print $2}'`
 
@@ -85,3 +77,5 @@ docker run \
   -v $ARTIFACT_FOLDER:/tmp/artifacts \
   klaxalk/pybadges \
   /bin/bash -c "/bin/python3 -m pybadges --left-text='test coverage' --right-text='${COVERAGE_PCT}' --right-color='#0c0' > /tmp/artifacts/coverage_html/badge.svg"
+
+echo "$0: coverage generation finished"

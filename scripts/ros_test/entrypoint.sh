@@ -52,25 +52,4 @@ colcon test-result --all --verbose || FAILED=1
 
 echo "$0: tests finished"
 
-## | ---------------------- save coverage --------------------- |
-
-# if [[ "$FAILED" -eq 0 ]]; then
-
-#   echo "$0: storing coverage data"
-
-#   # gather all the coverage data from the workspace
-#   lcov --capture --directory ${WORKSPACE} --ignore-errors mismatch,mismatch,gcov,gcov,negative,negative --output-file /tmp/coverage.original || echo "$0: no coverage data to extract"
-
-#   echo "$0: filtering out tests"
-
-#   # filter out unwanted files, i.e., test files
-#   lcov --remove /tmp/coverage.original "*/test/*" --output-file /tmp/coverage.removed || echo "$0: coverage tracefile is empty"
-
-#   echo "$0: extract sources"
-
-#   # extract coverage data for the source folder of the workspace
-#   lcov --extract /tmp/coverage.removed "$WORKSPACE/src/*" --output-file $COVERAGE/$REPOSITORY_NAME.info || echo "$0: coverage tracefile is empty"
-
-# fi
-
 exit $FAILED

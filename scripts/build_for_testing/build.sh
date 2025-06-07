@@ -69,9 +69,9 @@ echo "$FULL_COVERAGE_REPOS" | while IFS= read -r REPO; do
     continue
   fi
 
-  if $RUN_LOCALLY && [[ "mrs_uav_hw_api" != "$PACKAGE" ]]; then
-    continue
-  fi
+  # if $RUN_LOCALLY && [[ "mrs_uav_managers" != "$PACKAGE" ]]; then
+  #   continue
+  # fi
 
   echo "$0: cloning '$URL --depth 1 --branch $BRANCH' into '$PACKAGE'"
   git clone $URL --recurse-submodules --shallow-submodules --depth 1 --branch $BRANCH $PACKAGE
