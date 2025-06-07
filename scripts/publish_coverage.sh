@@ -38,12 +38,22 @@ docker pull klaxalk/lcov
 
 echo "$0: combining coverage report files"
 
+ARGS=""
+
+for file in `ls $ARTIFACT_FOLDER | grep ".json"`; do
+
+  if [ -s ${ARTIFACT_FOLDER}/${file} ]; then
+    ARGS="${ARGS} -a ${ARTIFACT_FOLDER}/${file}"
+  fi
+
+done
+
 docker run \
   --rm \
   -v $WORKSPACE:/tmp/workspace \
   -v $ARTIFACT_FOLDER:/tmp/artifacts \
   klaxalk/lcov \
-  /bin/bash -c "cd /tmp/workspace && gcovr --json-add-tracefile $ARTIFACT_FOLDER/*.json --filter='^.*\/src\/.*$' --exclude='^.*\/test\/.*$' --lcov /tmp/workspace/coverage.info"
+  /bin/bash -c "cd /tmp/workspace && gcovr $ARGS --filter='^.*\/src\/.*$' --exclude='^.*\/test\/.*$' --lcov /tmp/workspace/coverage.info"
 
 echo "$0: filtering coverage report"
 

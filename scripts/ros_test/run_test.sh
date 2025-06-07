@@ -32,7 +32,7 @@ ARTIFACTS_FOLDER=$5
 
 [ -z $LIST ] && LIST=mrs
 [ -z $VARIANT ] && VARIANT=unstable
-[ -z $REPOSITORY_NAME ] && REPOSITORY_NAME=mrs_uav_managers
+[ -z $REPOSITORY_NAME ] && REPOSITORY_NAME=mrs_uav_testing
 [ -z $DOCKER_IMAGE ] && DOCKER_IMAGE=jazzy_builder
 [ -z $ARTIFACTS_FOLDER ] && ARTIFACTS_FOLDER=/tmp/artifacts
 
@@ -147,5 +147,5 @@ docker run \
 
 # move the generated coverage data
 if [ -e /tmp/workspace/$REPOSITORY_NAME.json ]; then
-  cp -r /tmp/workspace/$REPOSITORY_NAME.json /tmp/artifacts
+  mv /tmp/workspace/$REPOSITORY_NAME.json /tmp/artifacts
 fi
