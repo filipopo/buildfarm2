@@ -135,9 +135,10 @@ docker run \
   $DOCKER_IMAGE \
   /bin/bash -c "/tmp/workspace/entrypoint.sh $REPOSITORY_NAME"
 
-docker image rm $DOCKER_IMAGE
-
-$REPO_PATH/ci_scripts/helpers/wait_for_docker.sh
+# remove the docker builder image and clean the docker cache
+docker system prune -f
+docker image rm $DOCKER_IMAGE -f
+docker system prune -f
 
 docker pull klaxalk/lcov
 
