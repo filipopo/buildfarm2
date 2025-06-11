@@ -137,6 +137,7 @@ docker run \
 
 # remove the docker builder image and clean the docker cache
 docker system prune -f
+docker image rm ghcr.io/ctu-mrs/buildfarm2:$DOCKER_IMAGE -f
 docker image rm $DOCKER_IMAGE -f
 docker system prune -f
 
