@@ -9,6 +9,7 @@ mrs_msgs:
   generate_docker_image: false
   ros_test:
     enabled: false
+    full_test_coverage: false
 
 mrs_lib:
   architecture: [amd64, arm64]
@@ -34,7 +35,7 @@ mrs_multirotor_simulator:
   generate_docker_image: false
   ros_test:
     enabled: false
-    full_test_coverage: true
+    full_test_coverage: false
 
 mrs_uav_hw_api:
   architecture: [amd64, arm64]
@@ -85,7 +86,7 @@ mrs_uav_controllers:
     stable: ros2_release
   generate_docker_image: false
   ros_test:
-    enabled: false
+    enabled: true
     full_test_coverage: true
 
 mrs_uav_core:
@@ -99,7 +100,7 @@ mrs_uav_core:
   generate_docker_image: false
   ros_test:
     enabled: false
-    full_test_coverage: true
+    full_test_coverage: false
 
 mrs_uav_trackers:
   architecture: [amd64, arm64]
@@ -125,7 +126,7 @@ mrs_uav_autostart:
   generate_docker_image: false
   ros_test:
     enabled: false
-    full_test_coverage: true
+    full_test_coverage: false
 
 mrs_uav_px4_api:
   architecture: [amd64, arm64]
@@ -138,7 +139,7 @@ mrs_uav_px4_api:
   generate_docker_image: false
   ros_test:
     enabled: false
-    full_test_coverage: true
+    full_test_coverage: false
 
 mrs_uav_trajectory_generation:
   architecture: [amd64, arm64]
@@ -151,7 +152,7 @@ mrs_uav_trajectory_generation:
   generate_docker_image: false
   ros_test:
     enabled: false
-    full_test_coverage: true
+    full_test_coverage: false
 
 mrs_uav_testing:
   architecture: [amd64, arm64]
