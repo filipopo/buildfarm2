@@ -24,7 +24,7 @@ if [ ! -e $WORKSPACE/install ]; then
   cd $WORKSPACE
 
   source /opt/ros/jazzy/setup.bash
-  colcon build --cmake-args -DCOVERAGE=true -DMRS_ENABLE_TESTING=true
+  colcon build --symlink-install --cmake-args -DCOVERAGE=true -DMRS_ENABLE_TESTING=true
 
 fi
 
@@ -36,7 +36,7 @@ cd $WORKSPACE
 
 source $WORKSPACE/install/setup.bash
 
-colcon build --cmake-args -DCOVERAGE=true -DMRS_ENABLE_TESTING=true
+colcon build --cmake-args -DCOVERAGE=true -DMRS_ENABLE_TESTING=true --paths $WORKSPACE/src/$REPOSITORY_NAME
 
 ## | --- run tests an all ros packages within the repository -- |
 
