@@ -124,8 +124,8 @@ cp $MY_PATH/entrypoint.sh $WORKSPACE_FOLDER/
 
 ## | -------------------- enable core dumps ------------------- |
 
-sudo sysctl -w kernel.core_pattern="/tmp/coredumps/%e_%p.core"
-ulimit -c unlimited
+# sudo sysctl -w kernel.core_pattern="/tmp/coredumps/%e_%p.core"
+# ulimit -c unlimited
 
 ## | ---------------------- run the test ---------------------- |
 

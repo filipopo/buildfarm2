@@ -38,7 +38,13 @@ source $WORKSPACE/install/setup.bash
 
 colcon build --cmake-args -DENABLE_COVERAGE=true -DENABLE_TESTS=true --paths $WORKSPACE/src/$REPOSITORY_NAME
 
+source $WORKSPACE/install/setup.bash
+
+ls -lah /opt/ros/jazzy/share
+
 ## | --- run tests an all ros packages within the repository -- |
+
+echo "$0: running the tests"
 
 cd $WORKSPACE
 
