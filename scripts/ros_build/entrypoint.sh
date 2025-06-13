@@ -5,6 +5,8 @@ set -e
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 trap 'echo "$0: \"${last_command}\" command failed with exit code $?"' ERR
 
+VARIANT=$1
+
 # determine our architecture
 ARCH=$(dpkg-architecture -qDEB_HOST_ARCH)
 
@@ -113,7 +115,15 @@ OLDIFS=$IFS; IFS=$'\n'; for LINE in $BUILD_ORDER; do
       export DEB_BUILD_OPTIONS="parallel=`nproc`"
     fi
 
+    if [[ "$VARIANT" == "testing" ]]; then
+
     bloom-generate rosdebian --os-name ubuntu --os-version noble --ros-distro jazzy
+
+  echo "
+override_dh_auto_configure:
+	dh_auto_configure -- \
+	  -DENABLE_COVERAGE=true" >> debian/rules
+    fi
 
     epoch=2
     build_flag="$(date +%Y%m%d.%H%M%S)~git.$SHA.base.$DOCKER_SHA"

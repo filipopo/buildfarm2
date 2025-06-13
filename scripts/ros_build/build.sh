@@ -26,8 +26,8 @@ ARTIFACTS_FOLDER=$6
 # default for testing
 
 [ -z $LIST ] && LIST=mrs
-[ -z $VARIANT ] && VARIANT=unstable
-[ -z $REPOSITORY ] && REPOSITORY=mrs_msgs
+[ -z $VARIANT ] && VARIANT=testing
+[ -z $REPOSITORY ] && REPOSITORY=mrs_uav_autostart
 [ -z $BASE_IMAGE ] && BASE_IMAGE=ctumrs/ros_jazzy:latest
 [ -z $DOCKER_IMAGE ] && DOCKER_IMAGE=jazzy_builder
 [ -z $ARTIFACTS_FOLDER ] && ARTIFACTS_FOLDER=/tmp/artifacts
@@ -133,7 +133,7 @@ docker run \
   -v /tmp/debs:/etc/docker/debs \
   -v /tmp/other_files:/etc/docker/other_files \
   $DOCKER_IMAGE \
-  /bin/bash -c "/etc/docker/other_files/entrypoint.sh"
+  /bin/bash -c "/etc/docker/other_files/entrypoint.sh $VARIANT"
 
 # if there are any artifacts, update the builder image
 

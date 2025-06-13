@@ -11,20 +11,73 @@ MY_PATH=`( cd "$MY_PATH" && pwd )`
 
 REPO_PATH=$MY_PATH/..
 
-ARTIFACT_FOLDER=$1
+## | -------------------------- args -------------------------- |
 
-[ -z $ARTIFACT_FOLDER ] && ARTIFACT_FOLDER=/tmp/artifacts
+# INPUTS
+LIST=$1
+VARIANT=$2
+ARTIFACT_FOLDER=$3
+
 [ -z $RUN_LOCALLY ] && RUN_LOCALLY=false
+
+# default for testing
+
+[ -z $LIST ] && LIST=mrs
+[ -z $VARIANT ] && VARIANT=unstable
+[ -z $ARTIFACT_FOLDER ] && ARTIFACT_FOLDER=/tmp/artifacts
+
+# determine our architecture
+ARCH=$(dpkg-architecture -qDEB_HOST_ARCH)
+
+## | ---------------------- derived args ---------------------- |
+
+echo "$0: creating workspace"
 
 WORKSPACE=/tmp/workspace
 
-echo "$0: extracting workspace"
+mkdir -p $WORKSPACE/src
 
-# extract the workspace
-if ! $RUN_LOCALLY; then
-  cd $ARTIFACT_FOLDER
-  tar -xvzf workspace.tar.gz -C /tmp/
-fi
+YAML_FILE=$REPO_PATH/${LIST}.yaml
+
+FULL_COVERAGE_REPOS=$($REPO_PATH/scripts/helpers/parse_yaml.py $YAML_FILE $ARCH)
+
+echo "$FULL_COVERAGE_REPOS" | while IFS= read -r REPO; do
+
+  cd /tmp/workspace/src
+
+  PACKAGE=$(echo "$REPO" | awk '{print $1}')
+  URL=$(echo "$REPO" | awk '{print $2}')
+  TEST=$(echo "$REPO" | awk '{print $6}')
+  FULL_COVERAGE=$(echo "$REPO" | awk '{print $7}')
+  GITMAN=$(echo "$REPO" | awk '{print $8}')
+
+  if [[ "$VARIANT" == "stable" ]]; then
+    BRANCH=$(echo "$REPO" | awk '{print $3}')
+  elif [[ "$VARIANT" == "testing" ]]; then
+    BRANCH=$(echo "$REPO" | awk '{print $4}')
+  elif [[ "$VARIANT" == "unstable" ]]; then
+    BRANCH=$(echo "$REPO" | awk '{print $5}')
+  fi
+
+  if [[ "$TEST" != "True" ]]; then
+    continue
+  fi
+
+  # if $RUN_LOCALLY && [[ "mrs_uav_managers" != "$PACKAGE" ]]; then
+  #   continue
+  # fi
+
+  echo "$0: cloning '$URL --depth 1 --branch $BRANCH' into '$PACKAGE'"
+  git clone $URL --recurse-submodules --shallow-submodules --depth 1 --branch $BRANCH $PACKAGE
+
+  if [[ "$GITMAN" == "True" ]]; then
+    cd $PACKAGE
+    [[ -e .gitman.yml || -e .gitman.yaml ]] && gitman install
+  fi
+
+done
+
+echo "$0: repositories cloned to /tmp/repository"
 
 echo "$0: workspace extracted"
 

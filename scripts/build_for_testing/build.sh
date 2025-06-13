@@ -24,7 +24,7 @@ ARTIFACTS_FOLDER=$4
 # default for testing
 
 [ -z $LIST ] && LIST=mrs
-[ -z $VARIANT ] && VARIANT=unstable
+[ -z $VARIANT ] && VARIANT=testing
 [ -z $DOCKER_IMAGE ] && DOCKER_IMAGE=jazzy_builder
 [ -z $ARTIFACTS_FOLDER ] && ARTIFACTS_FOLDER=/tmp/artifacts
 
@@ -36,7 +36,7 @@ ARCH=$(dpkg-architecture -qDEB_HOST_ARCH)
 YAML_FILE=$REPO_PATH/${LIST}.yaml
 
 # needed for building open_vins
-export ROS_VERSION=1
+export ROS_VERSION=2
 
 FULL_COVERAGE_REPOS=$($REPO_PATH/scripts/helpers/parse_yaml.py $YAML_FILE $ARCH)
 

@@ -24,4 +24,4 @@ git config --global --add safe.directory /etc/docker/repository
 
 cd $WORKSPACE
 
-colcon build --symlink-install --cmake-args -DCOVERAGE=true
+colcon build --symlink-install --cmake-args -DENABLE_COVERAGE=true
