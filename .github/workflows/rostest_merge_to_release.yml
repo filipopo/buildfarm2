@@ -156,7 +156,7 @@ jobs:
         - id: test
           run: |
             ls -la ${{env.ARTIFACTS_FOLDER}}
-            ./scripts/publish_coverage.sh ${{env.ARTIFACTS_FOLDER}}
+            ./scripts/publish_coverage.sh ${{env.APP_LIST}} ${{env.VARIANT}} ${{env.ARTIFACTS_FOLDER}}
         - name: Deploy
           uses: peaceiris/actions-gh-pages@v3
           with:
