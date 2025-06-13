@@ -115,15 +115,7 @@ OLDIFS=$IFS; IFS=$'\n'; for LINE in $BUILD_ORDER; do
       export DEB_BUILD_OPTIONS="parallel=`nproc`"
     fi
 
-    if [[ "$VARIANT" == "testing" ]]; then
-
     bloom-generate rosdebian --os-name ubuntu --os-version noble --ros-distro jazzy
-
-  echo "
-override_dh_auto_configure:
-	dh_auto_configure -- \
-	  -DENABLE_COVERAGE=true" >> debian/rules
-    fi
 
     epoch=2
     build_flag="$(date +%Y%m%d.%H%M%S)~git.$SHA.base.$DOCKER_SHA"
