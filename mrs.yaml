@@ -151,7 +151,7 @@ mrs_uav_trajectory_generation:
     stable: ros2_release
   generate_docker_image: false
   ros_test:
-    enabled: false
+    enabled: true
     full_test_coverage: false
 
 mrs_uav_testing:
