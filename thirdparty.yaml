@@ -17,3 +17,13 @@ realsense:
     unstable: ros2
     testing: ros2_release_candidate
     stable: ros2_release
+
+bluefox2:
+  architecture: [amd64]
+  source: https://github.com/ctu-mrs/bluefox2
+  gitman: false
+  generate_docker_image: true
+  git_refs:
+    unstable: ros2
+    testing: ros2_release_candidate
+    stable: ros2_release
