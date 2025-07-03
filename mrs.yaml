@@ -234,7 +234,7 @@ mrs_uav_deployment:
 
 mrs_uav_flightforge_simulator:
   architecture: [amd64, arm64]
-  source: https://github.com/ctu-mrs/mrs_uav_unreal_simulator
+  source: https://github.com/ctu-mrs/mrs_uav_unreal_simulation.git
   gitman: true
   git_refs:
     unstable: ros2
