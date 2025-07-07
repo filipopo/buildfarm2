@@ -87,7 +87,7 @@ fi
 
 echo "$0: building the image"
 
-cd $REPO_PATH/$PATH_TO_DOCKER_FOLDER
+cd /tmp/repository/$PATH_TO_DOCKER_FOLDER
 
 OUTPUT_IMAGE=ctumrs/${REPO_PATH}:unstable
 
