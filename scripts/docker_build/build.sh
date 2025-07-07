@@ -91,6 +91,6 @@ echo "$0: building the image"
 
 cd /tmp/repository/$PATH_TO_DOCKER_FOLDER
 
-OUTPUT_IMAGE=ctumrs/${REPO_PATH}:unstable
+OUTPUT_IMAGE=ctumrs/${REPO_NAME}:unstable
 
 docker buildx build . --file Dockerfile --build-arg BASE_IMAGE=${BASE_IMAGE} --build-arg PPA_VARIANT=${PPA_VARIANT} --tag ${OUTPUT_IMAGE} --progress plain --push
