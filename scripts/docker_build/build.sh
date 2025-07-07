@@ -15,18 +15,20 @@ REPO_PATH=$MY_PATH/../..
 
 # INPUTS
 LIST=$1
-VARIANT=$2
+PPA_VARIANT=$2
 REPOSITORY=$3
 PATH_TO_DOCKER_FOLDER=$4
+BASE_IMAGE=$5
 
 [ -z $RUN_LOCALLY ] && RUN_LOCALLY=false
 
 # default for testing
 
 [ -z $LIST ] && LIST=mrs
-[ -z $VARIANT ] && VARIANT=testing
+[ -z $PPA_VARIANT ] && PPA_VARIANT=testing
 [ -z $REPOSITORY ] && REPOSITORY=mrs_uav_autostart
 [ -z $PATH_TO_DOCKER_FOLDER ] && PATH_TO_DOCKER_FOLDER=~/git/realsense/docker
+[ -z $BASE_IMAGE ] && BASE_IMAGE=ctumrs/ros_jazzy:latest
 
 ## | ---------------------- derived args ---------------------- |
 
@@ -40,7 +42,7 @@ YAML_FILE=$REPO_PATH/${LIST}.yaml
 # needed for building open_vins
 export ROS_VERSION=1
 
-REPOS=$($REPO_PATH/scripts/helpers/get_repo_source.py $YAML_FILE $VARIANT $ARCH $REPOSITORY)
+REPOS=$($REPO_PATH/scripts/helpers/get_repo_source.py $YAML_FILE $PPA_VARIANT $ARCH $REPOSITORY)
 
 # clone and checkout
 echo "$REPOS" | while IFS= read -r REPO; do
