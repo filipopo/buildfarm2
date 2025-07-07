@@ -33,6 +33,8 @@ def main():
                 unstable_ref = "none"
                 ros_test_enabled = False
                 full_coverage = False
+                gitman = False
+                docker = False
 
                 refs = properties['git_refs']
 
@@ -48,6 +50,11 @@ def main():
 
                 try:
                     unstable_ref = refs['unstable']
+                except:
+                    pass
+
+                try:
+                    docker = bool(properties['generate_docker_image'])
                 except:
                     pass
 
@@ -71,7 +78,7 @@ def main():
                 except:
                     pass
 
-                print("{} {} {} {} {} {} {} {}".format(package, url, stable_ref, testing_ref, unstable_ref, ros_test_enabled, full_coverage, gitman))
+                print("{} {} {} {} {} {} {} {} {}".format(package, url, stable_ref, testing_ref, unstable_ref, ros_test_enabled, full_coverage, gitman, docker))
 
 if __name__ == '__main__':
     main()
