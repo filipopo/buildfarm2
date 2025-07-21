@@ -24,6 +24,8 @@ jobs:
     runs-on: ubuntu-22.04
     outputs:
       packages: ${{ steps.generate.outputs.packages }}
+    env:
+      PUSH_TOKEN: ${{secrets.PUSH_TOKEN}}
     steps:
       - uses: actions/checkout@v3
         with:

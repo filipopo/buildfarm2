@@ -79,7 +79,7 @@ if ! $RUN_LOCALLY; then
 
   echo "$0: logging in to docker registry"
 
-  echo $PUSH_TOKEN | docker login ghcr.io -u ctumrsbot --password-stdin
+  docker login --username klaxalk --password $DOCKERHUB
 
 fi
 
