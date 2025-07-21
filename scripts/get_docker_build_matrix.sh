@@ -37,9 +37,9 @@ while IFS= read -r REPO; do
   fi
 
   if [[ $BUILD_ORDER == "" ]]; then
-    BUILD_ORDER="[$REPOSITORY"
+    BUILD_ORDER="[\"$REPOSITORY\""
   else
-    BUILD_ORDER="$BUILD_ORDER, $REPOSITORY"
+    BUILD_ORDER="$BUILD_ORDER, \"$REPOSITORY\""
   fi
 
 done < <(echo "$REPOS")
