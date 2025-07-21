@@ -49,7 +49,7 @@ def main():
         except:
             pass
 
-        print("{} {} {} {}, {}, {}".format(repo_name, url, ref, gitman, amd, arm))
+        print("{} {} {} {} {} {}".format(repo_name, url, ref, gitman, amd, arm))
 
 if __name__ == '__main__':
     main()
