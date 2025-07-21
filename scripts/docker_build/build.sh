@@ -35,17 +35,17 @@ BASE_IMAGE=$5
 # determine our architecture
 ARCH=$(dpkg-architecture -qDEB_HOST_ARCH)
 
-ROSDEP_FILE="generated_${LIST}_${ARCH}.yaml"
-
 YAML_FILE=$REPO_PATH/${LIST}.yaml
 
 # needed for building open_vins
 export ROS_VERSION=1
 
-REPOS=$($REPO_PATH/scripts/helpers/get_repo_source.py $YAML_FILE $PPA_VARIANT $ARCH $REPOSITORY)
+REPOS=$($REPO_PATH/scripts/helpers/get_repo_source_for_docker.py $YAML_FILE $PPA_VARIANT $ARCH $REPOSITORY)
+
+PLATFORM=""
 
 # clone and checkout
-echo "$REPOS" | while IFS= read -r REPO; do
+while IFS= read -r REPO; do
 
   cd /tmp
 
@@ -55,6 +55,16 @@ echo "$REPOS" | while IFS= read -r REPO; do
   URL=$(echo "$REPO" | awk '{print $2}')
   BRANCH=$(echo "$REPO" | awk '{print $3}')
   GITMAN=$(echo "$REPO" | awk '{print $4}')
+  AMD=$(echo "$REPO" | awk '{print $5}')
+  ARM=$(echo "$REPO" | awk '{print $6}')
+
+  if [[ "$AMD" == "True" ]] && [[ "$ARM" == "True" ]]; then
+    PLATFORM="linux/amd64,linux/arm64"
+  else if [[ "$AMD" == "True" ]]; then
+    PLATFORM="linux/amd64"
+  else if [[ "$ARM" == "True" ]]; then
+    PLATFORM="linux/arm64"
+  fi
 
   echo "$0: cloning '$URL --depth 1 --branch $BRANCH' into '$REPO'"
   [ -e repository ] && rm -rf repository || git clone $URL --recurse-submodules --depth 1 --branch $BRANCH repository
@@ -65,7 +75,7 @@ echo "$REPOS" | while IFS= read -r REPO; do
     [[ -e .gitman.yml || -e .gitman.yaml ]] && gitman install
   fi
 
-done
+done < <(echo "$REPOS")
 
 echo "$0: repository cloned to /tmp/repository"
 
@@ -93,4 +103,4 @@ cd /tmp/repository/$PATH_TO_DOCKER_FOLDER
 
 OUTPUT_IMAGE=ctumrs/${REPOSITORY}:unstable
 
-docker buildx build . --file Dockerfile --build-arg BASE_IMAGE=${BASE_IMAGE} --build-arg PPA_VARIANT=${PPA_VARIANT} --tag ${OUTPUT_IMAGE} --progress plain --push
+docker buildx build . --file Dockerfile --build-arg BASE_IMAGE=${BASE_IMAGE} --build-arg PPA_VARIANT=${PPA_VARIANT} --tag ${OUTPUT_IMAGE} --platform=$PLATFORM --progress plain --push

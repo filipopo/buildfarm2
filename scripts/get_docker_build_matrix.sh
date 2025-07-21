@@ -14,61 +14,39 @@ REPO_PATH=${MY_PATH}/..
 ## | ------------------------ arguments ----------------------- |
 
 LIST=$1
-VARIANT=$2
 
 ## | ----------------------------  ---------------------------- |
 
 YAML_FILE=$REPO_PATH/$LIST.yaml
 
-ARCH=$(dpkg-architecture -qDEB_HOST_ARCH)
+REPOS=$($REPO_PATH/scripts/helpers/parse_yaml_for_docker.py $YAML_FILE)
 
-REPOS=$($REPO_PATH/scripts/helpers/parse_yaml.py $YAML_FILE $ARCH)
-
-WORKSPACE=/tmp/workspace
-
-if [ -e $WORKSPACE ]; then
-  rm -rf $WORKSPACE
-fi
-
-mkdir -p $WORKSPACE >> /tmp/log.txt 2>&1
-
-cd $WORKSPACE >> /tmp/log.txt 2>&1
+BUILD_ORDER=""
 
 # clone and checkout
-echo "$REPOS" | while IFS= read -r REPO; do
+while IFS= read -r REPO; do
 
-  cd $WORKSPACE >> /tmp/log.txt 2>&1
-
-  PACKAGE=$(echo "$REPO" | awk '{print $1}')
+  REPOSITORY=$(echo "$REPO" | awk '{print $1}')
   URL=$(echo "$REPO" | awk '{print $2}')
-  DOCKER=$(echo "$REPO" | awk '{print $9}')
+  DOCKER=$(echo "$REPO" | awk '{print $3}')
+  AMD=$(echo "$REPO" | awk '{print $4}')
+  ARM=$(echo "$REPO" | awk '{print $5}')
 
   if [[ "$DOCKER" == "False" ]]; then
     continue
   fi
 
-  if [[ "$VARIANT" == "stable" ]]; then
-    BRANCH=$(echo "$REPO" | awk '{print $3}')
-  elif [[ "$VARIANT" == "testing" ]]; then
-    BRANCH=$(echo "$REPO" | awk '{print $4}')
+  if [[ $BUILD_ORDER == "" ]]; then
+    BUILD_ORDER="[$REPOSITORY"
   else
-    BRANCH=$(echo "$REPO" | awk '{print $5}')
+    BUILD_ORDER="$BUILD_ORDER, $REPOSITORY"
   fi
 
-  if [[ "$BRANCH" == "none" ]]; then
-    continue
-  fi
+done < <(echo "$REPOS")
 
-  echo "$0: Cloning '$REPO' from '$URL --branch $BRANCH' into '$PACKAGE'" >> /tmp/log.txt 2>&1
+BUILD_ORDER="$BUILD_ORDER]"
 
-  git clone $URL --recurse-submodules --shallow-submodules --depth 1 --branch $BRANCH $PACKAGE >> /tmp/log.txt 2>&1
-
-done
-
-echo "$0: Done cloning" >> /tmp/log.txt 2>&1
 echo "" >> /tmp/log.txt 2>&1
-
-BUILD_ORDER=$($REPO_PATH/scripts/helpers/get_repository_build_order.py $WORKSPACE)
 
 echo "$0: ROS package build order:" >> /tmp/log.txt 2>&1
 echo "$BUILD_ORDER" >> /tmp/log.txt 2>&1
