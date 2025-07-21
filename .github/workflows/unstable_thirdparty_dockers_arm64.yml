@@ -1,4 +1,4 @@
-name: unstable_thirdparty_dockers_amd64
+name: unstable_thirdparty_dockers_arm64
 
 on:
   workflow_dispatch:
@@ -17,7 +17,7 @@ env:
 jobs:
 
   generate-jobs:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04-arm
     outputs:
       packages: ${{ steps.generate.outputs.packages }}
     env:
@@ -40,7 +40,7 @@ jobs:
           echo "packages=$JOB_STRATEGY_MATRIX" >> "$GITHUB_OUTPUT"
 
   build-job:
-    needs: generate-jobs
+    needs: generate-jobs-arm
     runs-on: ubuntu-22.04
     timeout-minutes: 360 # 6 hour timeout
     strategy:
