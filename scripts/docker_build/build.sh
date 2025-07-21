@@ -60,9 +60,9 @@ while IFS= read -r REPO; do
 
   if [[ "$AMD" == "True" ]] && [[ "$ARM" == "True" ]]; then
     PLATFORM="linux/amd64,linux/arm64"
-  else if [[ "$AMD" == "True" ]]; then
+  elif [[ "$AMD" == "True" ]]; then
     PLATFORM="linux/amd64"
-  else if [[ "$ARM" == "True" ]]; then
+  elif [[ "$ARM" == "True" ]]; then
     PLATFORM="linux/arm64"
   fi
 
