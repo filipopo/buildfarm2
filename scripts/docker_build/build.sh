@@ -101,7 +101,7 @@ echo "$0: building the image"
 
 cd /tmp/repository/$PATH_TO_DOCKER_FOLDER
 
-OUTPUT_IMAGE=ctumrs/${REPOSITORY}:unstable
+OUTPUT_IMAGE=ctumrs/${REPOSITORY}:$PPA_VARIANT
 
 docker buildx create --name container --driver=docker-container --use
 
