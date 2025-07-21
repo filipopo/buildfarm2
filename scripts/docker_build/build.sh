@@ -103,4 +103,6 @@ cd /tmp/repository/$PATH_TO_DOCKER_FOLDER
 
 OUTPUT_IMAGE=ctumrs/${REPOSITORY}:unstable
 
+docker buildx create --name container --driver=docker-container --use
+
 docker buildx build . --file Dockerfile --build-arg BASE_IMAGE=${BASE_IMAGE} --build-arg PPA_VARIANT=${PPA_VARIANT} --tag ${OUTPUT_IMAGE} --platform=$PLATFORM --progress plain --push
