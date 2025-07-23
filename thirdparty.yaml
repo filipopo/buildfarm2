@@ -27,3 +27,13 @@ bluefox2:
     unstable: ros2
     testing: ros2_release_candidate
     stable: ros2_release
+
+ouster-ros:
+  architecture: [amd64, arm64]
+  source: https://github.com/ctu-mrs/ouster-ros
+  gitman: false
+  generate_docker_image: false
+  git_refs:
+    unstable: ros2
+    testing: ros2_release_candidate
+    stable: ros2_release
