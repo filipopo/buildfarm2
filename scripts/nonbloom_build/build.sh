@@ -21,6 +21,11 @@ BASE_IMAGE=$4
 DOCKER_IMAGE=$5
 ARTIFACTS_FOLDER=$6
 
+if [ -z $RUN_LOCALLY ] && [ -z $REPOSITORY ]; then
+  echo "Empty repository name, not building"
+  exit 0
+fi
+
 [ -z $RUN_LOCALLY ] && RUN_LOCALLY=false
 
 # default for testing
