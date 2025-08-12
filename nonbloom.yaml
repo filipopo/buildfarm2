@@ -17,3 +17,12 @@ mrs_geographiclib_datasets:
     unstable: master
     testing: release_candidate
     stable: release
+
+mrs_uav_usb_configurator:
+  architecture: [amd64] # this package is for all architectures
+  source: https://github.com/ctu-mrs/mrs_uav_usb_configurator
+  gitman: false
+  git_refs:
+    unstable: ros2
+    testing: ros2_release_candidate
+    stable: ros2_release
